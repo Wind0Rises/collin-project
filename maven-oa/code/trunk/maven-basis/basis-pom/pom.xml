@@ -1,0 +1,15 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<!-- 安装在本地仓库或者是远程仓库，最基础的pom文件，主要配置一些maven插件 -->
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>com.liu.basis</groupId>
+	<artifactId>basis-pom</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<name>basis-pom</name>
+	
+	<!-- 配置一些maven插件 -->
+	
+	
+</project>
