@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xsi:schemaLocation="http://www.springframework.org/schema/beans
+     		http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+     		http://www.springframework.org/schema/context
+     		http://www.springframework.org/schema/context/spring-context-4.1.xsd
+     		http://www.springframework.org/schema/tx
+		    http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+		    http://www.springframework.org/schema/aop
+		    http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+	
+	<!-- 配置spring扫描的包 -->	
+	<context:component-scan base-package="com.liu.collin.project"></context:component-scan>
+	
+	<context:property-placeholder location="classpath*:config/*.properties" ignore-unresolvable="true"/>
+	
+	<!-- 配置数据源 -->
+	<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${mysql.jdbc.driver}" />
+		<property name="url" value="${mysql.jdbc.url}" />
+		<property name="username" value="${mysql.jdbc.username}" />
+		<property name="password" value="${mysql.jdbc.password}" />
+		<!-- druid加密必须的配置的两项 -->
+		<property name="filters" value="config" />
+        <property name="connectionProperties" value="config.decrypt=true" />
+	</bean>
+	
+	<!-- 配置sqlSessionFactory -->      
+	<bean id="ysSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis/mybatisConfig.xml"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- 因为使用了context:property-placeholder所以配置sqlSessionFactoryName而不是sqlSessionFactory -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" lazy-init="true">
+	  	<!-- 可以使用逗号分隔，配置多个包 -->
+        <property name="basePackage" value="com.liu.collin.project.ucif.dao" />  
+        <property name="sqlSessionFactoryBeanName" value="ysSqlSessionFactory"></property>  
+    </bean> 
+    
+    <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    
+    <tx:advice id="txAdvice" transaction-manager="transactionManager" >
+   		<!--配置事务传播性，隔离级别以及超时回滚等问题 -->  
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" read-only="false" />
+			<tx:method name="update*" propagation="REQUIRED" read-only="false" />
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false" />
+			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="count*" propagation="REQUIRED" read-only="true" />
+  		</tx:attributes>
+	</tx:advice>
+		
+	<!-- 使用AOP的方法配置事务 -->
+	<!-- <aop:config>
+		<aop:pointcut expression="execution(* com.liu.project.business.test.service.*.*(*))" id="pointcut"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
+	</aop:config> -->
+    
+</beans>
