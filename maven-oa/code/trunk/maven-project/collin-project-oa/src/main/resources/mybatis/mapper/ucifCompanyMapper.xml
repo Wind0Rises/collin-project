@@ -17,7 +17,7 @@
 		<result column="updateTime" property="updateTime" javaType="date" />
 	</resultMap>
 	
-	<sql id="selectColumn">
+	<sql id="selectColumns">
 		A.id, A.companyName, A.companyAddress, A.publicityImage, A.peopleNumber, A.establishDate, A.companyPhone, A.status, A.updateTime
 	</sql>
 	
@@ -60,6 +60,47 @@
 	
 	
 	<select id="getById" parameterType="long" resultMap="CompanyMap">
-		SELECT id,companyName FROM ucif_company WHERE id=#{id}
+		SELECT 
+		<include refid="selectColumns" />
+		FROM ucif_company A
+		WHERE id = #{id}
 	</select>
+	
+	<select id="selectOne" parameterType="HashMap" resultMap="CompanyMap">
+		SELECT 
+		<include refid="selectColumns" />
+		FROM ucif_company A
+		<include refid="selectWhere" />
+	</select>
+	
+	<update id="update" parameterType="Company">
+		UPDATE ucif_company 
+		<set>
+			<if test="companyName != null and companyName != ''">
+				companyName = #{companyName, jdbcType=VARCHAR},
+			</if>
+			<if test="companyAddress != null and companyAddress != ''">
+				companyAddress = #{companyAddress, jdbcType=VARCHAR},
+			</if>
+			<if test="publicityImage != null and publicityImage != ''">
+				publicityImage = #{publicityImage, jdbcType=VARCHAR},
+			</if>
+			<if test="peopleNumber != null">
+				peopleNumber = #{peopleNumber, jdbcType=INTEGER},
+			</if>
+			<if test="establishDate != null">
+				establishDate = #{establishDate, jdbcType=DATE},
+			</if>
+			<if test="companyPhone != null and companyPhone != ''">
+				companyPhone = #{companyPhone, jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status, jdbcType=INTEGER},
+			</if>
+			updateDate = CURRENT_DATE(),
+			updateTime = NOW()
+		</set>
+		WHERE id = #{id, jdbcType=BIGINT}
+	</update>
+	
 </mapper>
