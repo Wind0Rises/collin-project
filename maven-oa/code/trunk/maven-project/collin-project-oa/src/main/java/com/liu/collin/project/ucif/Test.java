@@ -6,12 +6,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.liu.collin.project.ucif.service.CompanyService;
 
 public class Test {
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring/springcontent.xml");
 		CompanyService companyService = (CompanyService) context.getBean("companyService");
 		
 		companyService.test();
-		
-		//zheshi1cezhi
 	}
 }
