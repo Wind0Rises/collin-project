@@ -11,5 +11,7 @@ public class Test {
 		CompanyService companyService = (CompanyService) context.getBean("companyService");
 		
 		companyService.test();
+		
+		//zheshi1cezhi
 	}
 }
